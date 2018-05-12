@@ -1,0 +1,631 @@
+{
+	"name": "vsliveshare",
+	"displayName": "VS Live Share",
+	"description": "Real-time collaborative development. Currently in preview.",
+	"version": "0.3.98",
+	"publisher": "ms-vsliveshare",
+	"preview": true,
+	"license": "SEE LICENSE IN LICENSE.txt",
+	"homepage": "https://aka.ms/vsls",
+	"bugs": {
+		"url": "https://aka.ms/vsls-issues",
+		"email": "vsls-feedback@microsoft.com"
+	},
+	"author": {
+		"name": "Microsoft"
+	},
+	"engines": {
+		"vscode": "^1.19.1"
+	},
+	"keywords": [
+		"Collaboration",
+		"Co-Edit",
+		"Co-Debug",
+		"Sharing",
+		"Remote"
+	],
+	"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
+	"categories": [
+		"Other"
+	],
+	"repository": {
+		"url": "https://github.com/MicrosoftDocs/live-share"
+	},
+	"icon": "images/icon.png",
+	"activationEvents": [
+		"onFileSystemAccess:vsls",
+		"*"
+	],
+	"main": "./out/src/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "liveshare.signin.browser",
+				"title": "Sign In With Browser",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.signin.token",
+				"title": "Sign In With User Code",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.signout",
+				"title": "Sign Out",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.start",
+				"title": "Start Collaboration Session (Share)",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.end",
+				"title": "End Collaboration Session",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.join",
+				"title": "Join Collaboration Session",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.leave",
+				"title": "Leave Collaboration Session",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.debug",
+				"title": "Join Debug Session",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.listSharedServers",
+				"title": "Show Shared Servers",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.shareServer",
+				"title": "Share Server",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.unshareServer",
+				"title": "Unshare Server",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.launcherSetup",
+				"title": "Launcher Setup",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.focusParticipants",
+				"title": "Focus Participants",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.listParticipants",
+				"title": "List Participants",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.pinTo",
+				"title": "Follow Participant",
+				"category": "Live Share",
+				"icon": {
+					"dark": "images/dark/pin.svg",
+					"light": "images/light/pin.svg"
+				}
+			},
+			{
+				"command": "liveshare.unpin",
+				"title": "Stop Following Participant",
+				"category": "Live Share",
+				"icon": {
+					"dark": "images/pin-green.svg",
+					"light": "images/pin-green.svg"
+				}
+			},
+			{
+				"command": "liveshare.exportLogs",
+				"title": "Export Logs",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.shareTerminal",
+				"title": "Share Terminal",
+				"category": "Live Share"
+			},
+			{
+				"command": "liveshare.listSharedTerminals",
+				"title": "Show Shared Terminals",
+				"category": "Live Share"
+			}
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "liveshare.pinTo",
+					"when": "liveshare:isPinnable && liveshare:hasCollaborators && !liveshare:isPinned",
+					"group": "navigation@-1000"
+				},
+				{
+					"command": "liveshare.unpin",
+					"when": "liveshare:isPinnable && liveshare:hasCollaborators && liveshare:isPinned",
+					"group": "navigation@-1000"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "liveshare.signin.browser",
+					"when": "liveshare:state == SignedOut"
+				},
+				{
+					"command": "liveshare.signin.browser",
+					"when": "liveshare:state == SigningIn"
+				},
+				{
+					"command": "liveshare.signin.browser",
+					"when": "liveshare:state == ExternallySigningIn"
+				},
+				{
+					"command": "liveshare.signin.token",
+					"when": "liveshare:state == SignedOut"
+				},
+				{
+					"command": "liveshare.signin.token",
+					"when": "liveshare:state == SigningIn"
+				},
+				{
+					"command": "liveshare.signin.token",
+					"when": "liveshare:state == ExternallySigningIn"
+				},
+				{
+					"command": "liveshare.signout",
+					"when": "liveshare:state != SignedOut"
+				},
+				{
+					"command": "liveshare.start",
+					"when": "liveshare:state == SignedIn"
+				},
+				{
+					"command": "liveshare.start",
+					"when": "liveshare:state == Shared"
+				},
+				{
+					"command": "liveshare.end",
+					"when": "liveshare:state == Shared"
+				},
+				{
+					"command": "liveshare.join",
+					"when": "liveshare:state == SignedIn"
+				},
+				{
+					"command": "liveshare.leave",
+					"when": "liveshare:state == Joined"
+				},
+				{
+					"command": "liveshare.debug",
+					"when": "liveshare:state == Joined"
+				},
+				{
+					"command": "liveshare.listSharedServers",
+					"when": "liveshare:isCollaborating"
+				},
+				{
+					"command": "liveshare.focusParticipants",
+					"when": "liveshare:hasCollaborators && liveshare:supportSummonParticipants"
+				},
+				{
+					"command": "liveshare.shareServer",
+					"when": "liveshare:state == Shared"
+				},
+				{
+					"command": "liveshare.unshareServer",
+					"when": "liveshare:isServerShared && liveshare:state == Shared"
+				},
+				{
+					"command": "liveshare.pinTo",
+					"when": "liveshare:isPinnable && liveshare:hasCollaborators && !liveshare:isPinned"
+				},
+				{
+					"command": "liveshare.unpin",
+					"when": "liveshare:isPinnable && liveshare:hasCollaborators && liveshare:isPinned"
+				},
+				{
+					"command": "liveshare.listParticipants",
+					"when": "liveshare:hasCollaborators"
+				},
+				{
+					"command": "liveshare.shareTerminal",
+					"when": "liveshare:state == Shared && liveshare:supportSharedTerminals"
+				},
+				{
+					"command": "liveshare.listSharedTerminals",
+					"when": "liveshare:hasSharedTerminals && liveshare:state == Joined"
+				}
+			]
+		},
+		"configuration": {
+			"type": "object",
+			"title": "Visual Studio Live Share configuration",
+			"properties": {
+				"liveshare.diagnosticLogging": {
+					"type": "boolean",
+					"default": true
+				},
+				"liveshare.accountProvider": {
+					"type": "string",
+					"default": null,
+					"description": "Preferred account provider for Visual Studio Live Share sign-in."
+				},
+				"liveshare.account": {
+					"type": "string",
+					"default": null,
+					"description": "Preferred account for Visual Studio Live Share sign-in."
+				},
+				"liveshare.connectionMode": {
+					"type": "string",
+					"default": "auto",
+					"enum": [
+						"auto",
+						"direct",
+						"relay"
+					],
+					"description": "Type of connection used for collaboration; the default (auto) mode prefers a direct connection, but may fallback to a cloud relay if the direct connection failed."
+				},
+				"liveshare.nameTagVisibility": {
+					"type": "string",
+					"default": "Activity",
+					"enum": [
+						"Always",
+						"Activity",
+						"Never"
+					],
+					"description": "Controls when to display a participant's name tag instead of just their cursor."
+				},
+				"liveshare.guestApprovalRequired": {
+					"type": "boolean",
+					"default": false,
+					"description": "Require host to approve all guests attempting to join collaboration session."
+				},
+				"liveshare.joinDebugSessionOption": {
+					"type": "string",
+					"default": "Automatic",
+					"enum": [
+						"Automatic",
+						"Manual",
+						"Prompt"
+					],
+					"description": "Controls how the participant will join incoming shared debug sessions."
+				},
+				"liveshare.excludedDebugTypes": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [],
+					"description": "List of debug adapter types to exclude when Live Share attempts to host a debug session."
+				},
+				"liveshare.sharedTerminalWidth": {
+					"type": "number",
+					"default": 120,
+					"description": "Width of shared terminal window, characters."
+				},
+				"liveshare.sharedTerminalHeight": {
+					"type": "number",
+					"default": 50,
+					"description": "Height of shared terminal window, characters."
+				},
+				"liveshare.features": {
+					"type": "string",
+					"default": "default",
+					"enum": [
+						"default",
+						"stable",
+						"experimental"
+					],
+					"description": "Controls set of active features."
+				}
+			}
+		},
+		"debuggers": [
+			{
+				"type": "vslsJoin",
+				"label": "Visual Studio Live Share Participant Debugging",
+				"windows": {
+					"program": "./dotnet_modules/Microsoft.Cascade.VSCodeAdapter.exe"
+				},
+				"osx": {
+					"program": "./dotnet_modules/Microsoft.Cascade.VSCodeAdapter"
+				},
+				"args": [],
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+							"agentUri",
+							"joinedInfo",
+							"localPath",
+							"pipeName"
+						],
+						"properties": {
+							"agentUri": {
+								"type": "string",
+								"description": "Agent Uri to connect to Live Share services"
+							},
+							"joinedInfo": {
+								"type": "object",
+								"description": "Join Info"
+							},
+							"localPath": {
+								"type": "string",
+								"description": "Local path of workspace"
+							},
+							"pipeName": {
+								"type": "string",
+								"description": "Pipe name to request host services"
+							}
+						}
+					}
+				}
+			},
+			{
+				"type": "vslsShare",
+				"label": "Visual Studio Live Share Debugging",
+				"windows": {
+					"program": "./dotnet_modules/Microsoft.Cascade.VSCodeHostAdapter.exe"
+				},
+				"osx": {
+					"program": "./dotnet_modules/Microsoft.Cascade.VSCodeHostAdapter"
+				},
+				"args": [],
+				"configurationAttributes": {
+					"launch": {
+						"required": [
+							"agentUri",
+							"joinedInfo",
+							"pipeName",
+							"adapterProxy"
+						],
+						"properties": {
+							"agentUri": {
+								"type": "string",
+								"description": "Agent Uri to connect to Live Share services"
+							},
+							"joinedInfo": {
+								"type": "object",
+								"description": "Join Info"
+							},
+							"pipeName": {
+								"type": "string",
+								"description": "Pipe name to request host services"
+							},
+							"adapterProxy": {
+								"type": "object",
+								"description": "The adapter proxy"
+							}
+						}
+					}
+				}
+			}
+		],
+		"problemMatchers": [
+			{
+				"name": "vsls",
+				"owner": "vsls",
+				"fileLocation": [
+					"relative",
+					"${workspaceFolder}"
+				],
+				"pattern": [
+					{
+						"regexp": "^([^\\s].*)$",
+						"file": 1
+					},
+					{
+						"regexp": "^\\s+(\\d+):(\\d+)\\s+(error|warning|info)\\s+(.*)\\s\\s+(.*)$",
+						"line": 1,
+						"column": 2,
+						"severity": 3,
+						"message": 4,
+						"code": 5
+					}
+				]
+			}
+		]
+	},
+	"scripts": {
+		"compile": "gulp build",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test",
+		"release": "npm install && gulp release",
+		"launcher-bin": "gulp launcher-binplace",
+		"vscode:uninstall": "node ./out/src/uninstall.js"
+	},
+	"dependencies": {
+		"@vsliveshare/vscode-launcher-linux": "2.0.4",
+		"@vsliveshare/vscode-launcher-osx": "1.0.32",
+		"@vsliveshare/vscode-launcher-win": "1.1.3",
+		"better-unzip": "^0.1.11",
+		"clipboardy": "^1.2.2",
+		"color-string": "^1.5.2",
+		"dateformat": "^3.0.2",
+		"download": "^6.2.5",
+		"fs-extra": "^5.0.0",
+		"getos": "^3.1.0",
+		"glob": "^7.1.2",
+		"http-proxy-agent": "^1.0.0",
+		"https-proxy-agent": "^1.0.0",
+		"jsonc-parser": "^0.3.0",
+		"lockfile": "^1.0.3",
+		"lodash.debounce": "^4.0.8",
+		"mkdirp": "^0.5.1",
+		"open": "^0.0.5",
+		"read-last-lines": "^1.4.0",
+		"request-light": "^0.2.0",
+		"semaphore-async-await": "^1.5.1",
+		"semver": "^5.4.1",
+		"source-map-support": "^0.5.5",
+		"tar": "^4.3.0",
+		"tmp": "^0.0.33",
+		"typescript": "2.6.2",
+		"uuid": "^3.2.1",
+		"vscode-debugprotocol": "^1.27.0",
+		"vscode-extension-telemetry": "^0.0.10",
+		"vscode-jsonrpc": "^3.3.1",
+		"vscode-languageclient": "^4.0.0",
+		"ws": "^3.1.0",
+		"yauzl": "^2.9.1",
+		"yazl": "^2.4.3"
+	},
+	"devDependencies": {
+		"@types/clipboardy": "^1.1.0",
+		"@types/color-string": "^1.5.0",
+		"@types/dateformat": "^1.0.1",
+		"@types/download": "^6.2.1",
+		"@types/fs-extra": "^5.0.0",
+		"@types/getos": "^3.0.0",
+		"@types/glob": "^5.0.35",
+		"@types/guid": "^1.0.0",
+		"@types/lockfile": "^1.0.0",
+		"@types/mkdirp": "^0.5.2",
+		"@types/mocha": "^2.2.32",
+		"@types/ncp": "^2.0.1",
+		"@types/node": "^6.0.40",
+		"@types/rewire": "^2.5.28",
+		"@types/semver": "^5.4.0",
+		"@types/tar": "^4.0.0",
+		"@types/tmp": "^0.0.33",
+		"@types/uuid": "^3.4.2",
+		"@types/ws": "^3.0.2",
+		"gulp": "^3.9.1",
+		"gulp-git": "^2.4.2",
+		"gulp-install": "^1.1.0",
+		"gulp-json-editor": "^2.2.1",
+		"gulp-sequence": "^0.4.6",
+		"gulp-sourcemaps": "^2.6.1",
+		"gulp-tslint": "^8.1.2",
+		"gulp-typescript": "^3.2.3",
+		"mocha": "^2.3.3",
+		"ncp": "^2.0.0",
+		"rewire": "^3.0.2",
+		"rimraf": "^2.6.2",
+		"tslint": "^5.7.0",
+		"vsce": "^1.35.0",
+		"vscode": "^1.1.14",
+		"yargs": "^10.0.3"
+	},
+	"executables": {
+		"osx": [
+			"./dotnet_modules/Microsoft.Cascade.VSCodeHostAdapter",
+			"./dotnet_modules/Microsoft.Cascade.VSCodeAdapter",
+			"./node_modules/@vsliveshare/vscode-launcher-osx/Live Share for VS Code.app",
+			"./node_modules/@vsliveshare/vscode-launcher-osx/Live Share for VS Code.app/Contents/MacOS/Live Share for VS Code",
+			"./dotnet_modules/vsls-agent",
+			"./dotnet_modules/LS/CS/mono.osx",
+			"./dotnet_modules/LS/CS/run",
+			"./dotnet_modules/external/osx/node",
+			"./dotnet_modules/external/osx/npm",
+			"./dotnet_modules/external/osx/npx"
+		],
+		"linux": [
+			"./dotnet_modules/Microsoft.Cascade.VSCodeHostAdapter",
+			"./dotnet_modules/Microsoft.Cascade.VSCodeAdapter",
+			"./dotnet_modules/vsls-agent",
+			"./dotnet_modules/LS/CS/mono.linux-x86_64",
+			"./dotnet_modules/LS/CS/run",
+			"./dotnet_modules/external/linux/node",
+			"./dotnet_modules/external/linux/npm",
+			"./dotnet_modules/external/linux/npx",
+			"./node_modules/clipboardy/fallbacks/linux/xsel"
+		]
+	},
+	"runtimeDependencies": [
+		{
+			"code": "NetCoreWin",
+			"description": ".NET Core Runtime 2.0.5 for win7-x86",
+			"url": "https://download.microsoft.com/download/1/1/0/11046135-4207-40D3-A795-13ECEA741B32/dotnet-runtime-2.0.5-win-x86.zip",
+			"platforms": [
+				"win32"
+			],
+			"installPath": "./dotnet_modules",
+			"unpackPath": "./temp",
+			"packageRootPath": "./shared/Microsoft.NETCore.App/2.0.5/",
+			"installTestPath": "./dotnet_modules/mscorlib.dll",
+			"checksum": "0dde0c5e705df1b3dad78384f93cc3ef6c6ef97880141a68ca1c1c7030edbb73",
+			"fileTotal": 214
+		},
+		{
+			"code": "NetCoreOsx",
+			"description": ".NET Core Runtime 2.0.5 for osx-x64",
+			"url": "https://download.microsoft.com/download/1/1/0/11046135-4207-40D3-A795-13ECEA741B32/dotnet-runtime-2.0.5-osx-x64.tar.gz",
+			"platforms": [
+				"darwin"
+			],
+			"installPath": "./dotnet_modules",
+			"unpackPath": "./temp",
+			"packageRootPath": "./shared/Microsoft.NETCore.App/2.0.5/",
+			"installTestPath": "./dotnet_modules/mscorlib.dll",
+			"checksum": "a4c04b36f9c08fd85dc88cd172480aaa2879c6035e45beb68a810d3afcc352dc",
+			"fileTotal": 171
+		},
+		{
+			"code": "NetCoreLinux",
+			"description": ".NET Core Runtime 2.0.5 for linux",
+			"url": "https://download.microsoft.com/download/1/1/0/11046135-4207-40D3-A795-13ECEA741B32/dotnet-runtime-2.0.5-linux-x64.tar.gz",
+			"platforms": [
+				"linux"
+			],
+			"installPath": "./dotnet_modules",
+			"unpackPath": "./temp",
+			"packageRootPath": "./shared/Microsoft.NETCore.App/2.0.5/",
+			"installTestPath": "./dotnet_modules/mscorlib.dll",
+			"checksum": "d55dbf65dcf3cc07b228915b04600bc1e2f5b46303cf9c8912c181898b95d8cf",
+			"fileTotal": 173
+		},
+		{
+			"code": "OmniSharpWin",
+			"description": "OmniSharp for Windows (.NET 4.6)",
+			"url": "https://download.visualstudio.microsoft.com/download/pr/100505823/5804b7d3b5eeb7e4ae812a7cff03bd52/omnisharp-win-x86-1.28.0.zip",
+			"platforms": [
+				"win32"
+			],
+			"installPath": "./dotnet_modules/LS/CS",
+			"retryDeletePath": "./dotnet_modules/LS/CS/",
+			"installTestPath": "./dotnet_modules/LS/CS/OmniSharp.exe",
+			"checksum": "9e4939cab97fa81315c9fe3dd1188849a4fa252b653ff76bf66918ca8d9cf3d4",
+			"fileTotal": 343
+		},
+		{
+			"code": "OmniSharpOsx",
+			"description": "OmniSharp for OSX",
+			"url": "https://download.visualstudio.microsoft.com/download/pr/100505818/6b99c6a86da3221919158ca0f36a3e45/omnisharp-osx-1.28.0.zip",
+			"platforms": [
+				"darwin"
+			],
+			"installPath": "./dotnet_modules/LS/CS",
+			"retryDeletePath": "./dotnet_modules/LS/CS/",
+			"installTestPath": "./dotnet_modules/LS/CS/mono.osx",
+			"checksum": "cb6b2b5d84207ace67fb0d95370d1367305d31c7ee4583cf8ad463484f05b2ec",
+			"fileTotal": 251
+		},
+		{
+			"code": "OmniSharpLinux",
+			"description": "OmniSharp for Linux (x64)",
+			"url": "https://download.visualstudio.microsoft.com/download/pr/11655912/d0b11407c8b6a61cc0cf8071b2a07c87/omnisharp-linux-x64-1.29.1.zip",
+			"installPath": "./dotnet_modules/LS/CS",
+			"installTestPath": "./dotnet_modules/LS/CS/mono.linux-x86_64",
+			"checksum": "fa244e9c11804690557807fa4b98743e3234fc53043a8f300277f9e7da91c808",
+			"fileTotal": 255,
+			"platforms": [
+				"linux"
+			]
+		}
+	],
+	"__metadata": {
+		"id": "5a6dc0d5-dc02-4121-8e24-cad33a2ff0af",
+		"publisherId": "74365139-d24d-4d0a-8377-c28643f7a216",
+		"publisherDisplayName": "Microsoft"
+	}
+}

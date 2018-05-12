@@ -1,0 +1,26 @@
+language: cpp
+
+git:
+  depth: 1000
+
+os:
+  - linux
+  - osx
+sudo: required
+dist: trusty
+osx_image: xcode8.3
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      nvm install v6.0.0;
+    fi
+install:
+  - git clone https://github.com/PowerShell/PowerShellEditorServices.git ../PowerShellEditorServices
+  - pushd build
+  - ./download.sh
+  - popd
+
+script:
+  - ulimit -n 4096
+  - sudo powershell -Command "Install-Module PowerShellGet -Force"
+  - powershell -File build/travis.ps1
